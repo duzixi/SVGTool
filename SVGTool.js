@@ -198,6 +198,7 @@ function svgPath(id, d, strokeWidth, strokeColor) {
 	svg +=    ' stroke:' + strokeColor + ';';
 	svg +=    ' stroke-width:' + strokeWidth + ';"';
 
+	svg += '></path>';
 	return svg;
 }
 
