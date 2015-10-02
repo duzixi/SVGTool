@@ -26,11 +26,9 @@ function svgFOOT(){
 function svgRect(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor){
 	var svg = '<rect id="' + id + '"';
 	
-	// 坐标
+	// 坐标与宽高
 	svg +=    ' x = "' + x + '"';
 	svg +=    ' y = "' + y + '"';
-	
-	// 形状
 	if(rx && ry) {
 		svg += ' rx = "' + rx + '"';
 		svg += ' ry = "' + ry + '"';
@@ -54,17 +52,13 @@ function svgRect(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor){
 function svgCircle(id, cx, cy, r, fillColor, strokeWidth, strokeColor){
 	var svg = '<circle id="' + id + '"';
 
-	// 坐标
+	// 坐标与半径
 	svg +=    ' cx = "' + cx + '"';
 	svg +=    ' cy = "' + cy + '"';
-
-	// 半径
 	svg +=    ' r = "' + r + '"';
 
 	// 颜色
 	svg +=    ' fill="' + fillColor + '"';
-
-	// svg +=    ' fill = "rgba(5,100,10,0.2)"';
 
 	// 描边
 	svg +=    ' stroke="' + strokeColor + '"';
@@ -79,15 +73,13 @@ function svgCircle(id, cx, cy, r, fillColor, strokeWidth, strokeColor){
 function svgEllipse(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor) {
 	var svg = '<ellipse id="' + id + '"';
 	
-	// 坐标
+	// 坐标与半径
 	svg +=    ' cx = "' + cx + '"';
 	svg +=    ' cy = "' + cy + '"';
-
-	// 半径
 	svg +=    ' rx = "' + rx + '"';
 	svg +=    ' ry = "' + ry + '"';
 
-	// 颜色 ??? 
+	// 颜色
 	svg +=    ' style="fill:' + fillColor + ';';
 
 	// 描边
@@ -136,7 +128,6 @@ function svgPolygon(id, points, fillColor, strokeWidth, strokeColor){
 	return svg;
 }
 
-
 // •折线 <polyline>
 // 示例：<polyline points="0,0 0,20 20,20 20,40 40,40 40,60" style="fill:white;stroke:red;stroke-width:2"/>
 function svgPolyLine(id, points, fillColor, strokeWidth, strokeColor){
@@ -154,7 +145,6 @@ function svgPolyLine(id, points, fillColor, strokeWidth, strokeColor){
 	svg +=    '></polyline>';
 	return svg;
 }
-
 
 // •路径 <path>
 /*
@@ -202,30 +192,90 @@ function svgPath(id, d, strokeWidth, strokeColor) {
 	return svg;
 }
 
-/*
-方法                       描述
+/* 滤镜 */
+// 说明：滤镜是CSS的一种样式，两者配合使用，效果最佳。
 
-// 访问
-getElementById()           返回带有指定 ID 的元素。 
-getElementsByTagName()     返回包含带有指定标签名称的所有元素的节点列表（集合/节点数组）。 
-getElementsByClassName()   返回包含带有指定类名的所有元素的节点列表。 
-
-// 
-appendChild()              把新的子节点添加到指定节点。 
-removeChild()              删除子节点。 
-replaceChild()             替换子节点。 
-insertBefore()             在指定的子节点前面插入新的子节点。 
-
-createAttribute()          创建属性节点。 
-createElement()            创建元素节点。 
-createTextNode()           创建文本节点。 
-
-getAttribute()             返回指定的属性值。 
-setAttribute()             把指定属性设置或修改为指定的值。 
+/* 在 SVG 中，可用的滤镜有：
+•feBlend
+•feColorMatrix
+•feComponentTransfer
+•feComposite
+•feConvolveMatrix
+•feDiffuseLighting
+•feDisplacementMap
+•feFlood
+•feGaussianBlur
+•feImage
+•feMerge
+•feMorphology
+•feOffset
+•feSpecularLighting
+•feTile
+•feTurbulence
+•feDistantLight
+•fePointLight
+•feSpotLight
 */
 
-/*
+// 高斯模糊
+// 示例：
+// SVG:
+//	   <defs><filter id="Gaussian_Blur"><feGaussianBlur in="SourceGraphic" stdDeviation="10" /></filter></defs>
+// CSS:
+//	   filter:url(#Gaussian_Blur);
+function filterGuassianBlur(id, r) {
+	var filter = '<defs><filter id="' + id + '">';
+	filter += '<feGaussianBlur in="SourceGraphic" stdDeviation="' + r + '" /></filter></defs>';
+	return filter;
+}
 
+// 添加文字
+
+
+/* 渐变填充 */
+// 说明：渐变填充是一种自定义的特殊颜色，可以直接作为参数传入上面的函数中使用，也可在CSS中指定使用。
+
+// 线性渐变
+// 示例：
+// SVG:
+	// <defs>
+	// <linearGradient id="orange_red" x1="0%" y1="0%" x2="100%" y2="0%">
+	// <stop offset="0%" style="stop-color:rgb(255,255,0); stop-opacity:1"/>
+	// <stop offset="100%" style="stop-color:rgb(255,0,0); stop-opacity:1"/>
+	// </linearGradient>
+	// </defs>
+// CSS:
+	// fill:url(#orange_red)
+function fillLinearGradient(id, x1, y1, x2, y2, offsets, colors) {
+	var fill = '<defs>';
+	fill += '<linearGradient id="' + id + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '">';
+
+	for(var i = 0; i < offsets.length; i++){
+		fill += ' <stop offset="'+offsets[i]+'%" style="stop-color:'+colors[i]+'"/>';
+	}
+
+	fill += '</linearGradient>';
+	fill += '</defs>';
+	return fill;
+}
+
+// 放射性渐变
+// 示例：
+// SVG:
+// <defs>
+// <radialGradient id="grey_blue" cx="50%" cy="50%" r="50%"
+// fx="50%" fy="50%">
+// <stop offset="0%" style="stop-color:rgb(200,200,200);
+// stop-opacity:0"/>
+// <stop offset="100%" style="stop-color:rgb(0,0,255);
+// stop-opacity:1"/>
+// </radialGradient>
+// </defs>
+
+
+
+// ------------------- 临时参考 ------------------------
+/*
 元素类型  NodeType
 
 元素 1 

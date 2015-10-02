@@ -2,6 +2,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=unicode" />
 <script src="SVGTool.js"></script>
+<style>
+#rect01 {
+	filter:url(#Gaussian_Blur);
+}
+</style>
 
 <script>
 
@@ -13,7 +18,7 @@ function init()
 
 	// var ellipse01 = svgEllipse(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor);
 
-	root.innerHTML = svgHEAD("svg001", "100%") + rect01 + circle01 + svgFOOT();
+	root.innerHTML = svgHEAD("svg001", "100%") + filterGuassianBlur("Gaussian_Blur", 10) + rect01 + circle01 + svgFOOT();
 }
 
 
@@ -25,6 +30,9 @@ function init()
 <body onload = "init();">
 
 <div id ="root"></div>
+
+
+
 
 
 </body>
