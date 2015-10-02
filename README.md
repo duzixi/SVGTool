@@ -12,39 +12,53 @@
 ----
 ## 通用
 
-- svgHEAD(id, height)
-- svgFOOT()
+- SVG头
+
+       svgHEAD(id, height)
+
+- SVG尾
+
+        svgFOOT()
 
 ## 基本形状
 
 - 矩形
+
         svgRect(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor)
 
 - 圆形
+
         svgCircle(id, cx, cy, r, fillColor, strokeWidth, strokeColor)
 
 - 椭圆形
+
         svgEllipse(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor)
 
 - 线段
+
         svgLine(id, x1, y1, x2, y2, strokeWidth, strokeColor)
 
 - 多边形
+
         svgPolygon(id, points, fillColor, strokeWidth, strokeColor)
 
 - 折线
+
         svgPolyLine(id, points, fillColor, strokeWidth, strokeColor)
 
 - 路径
+
         svgPath(id, d, strokeWidth, strokeColor) 
 
 
 ## 滤镜
 
 - 高斯模糊
+
         filterGuassianBlur(id, r)
 
 ## 渐变填充
 
 - 线性渐变
+
         fillLinearGradient(id, x1, y1, x2, y2, offsets, colors)
