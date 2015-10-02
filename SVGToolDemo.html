@@ -7,7 +7,13 @@
 
 function init()
 {
-	root.innerHTML = svgHEAD("svg001", 300) + svgRect("rect01", 100, 200, "red", 2, "#010101") + svgFOOT();
+	var rect01 ='<a href="http://www.duzixi.com">'+ svgRect("rect01",0, 0, 50,50, 100, 200, "red", 2, "#010101")+'</a>' ;
+	
+	var circle01 = svgCircle("c01", 100, 100, 50, "rgba(5,10,100,0.4)", 0, "yellow");
+
+	// var ellipse01 = svgEllipse(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor);
+
+	root.innerHTML = svgHEAD("svg001", "100%") + rect01 + circle01 + svgFOOT();
 }
 
 
@@ -17,6 +23,7 @@ function init()
 </head>
 
 <body onload = "init();">
+
 <div id ="root"></div>
 
 
