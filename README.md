@@ -7,6 +7,8 @@
 - 主要语言：JavaScript、SVG
 
 以下函数均返回字符串类型，用'+'拼接后赋值给innerHTML使用。
+    基本用法：
+
         xxxx.innerHTML = SVG头 + 滤镜 + 基本形状 + SVG尾;
 
 ----
@@ -14,7 +16,7 @@
 
 - SVG头
 
-       svgHEAD(id, height)
+        svgHEAD(id, height)
 
 - SVG尾
 
