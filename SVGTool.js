@@ -1,15 +1,21 @@
 //
 // SVGTool.js
 // 
+// (C) 2015 duzixi.com
+// 
 // 封装了常用的SVG方法。
 // 
-// 注意：SVG用DOM动态节点添加的方式无法显示，只能用字符串拼接的方式对innerHTML赋值。
-// (C) 2015 duzixi.com
+// svgXxxx      :	返回SVG字符串
+// svgXxxxNode  :	返回SVG节点
 
 /* 通用 */
+
+// 命名空间
+var XMLNS = "http://www.w3.org/2000/svg";
+
 function svgHEAD(id, height){
 	var head = '<svg id="' + id + '"';
-	head += 'xmlns="http://www.w3.org/2000/svg"';
+	head += 'xmlns="' + XMLNS + '"';
 	head += 'version="1.1" ';
 	head += 'height="' + height + '">';
 	return head;
@@ -47,6 +53,25 @@ function svgRect(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor){
 	return svg;
 }
 
+function svgRectNode(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(XMLNS, "rect");
+	
+	svgNode.id = id;
+	
+	svgNode.setAttribute("x", x);
+	svgNode.setAttribute("y", y);
+	svgNode.setAttribute("rx", rx);
+	svgNode.setAttribute("ry", ry);
+	svgNode.setAttribute("width", w);
+	svgNode.setAttribute("height", h);
+
+	svgNode.style.fill = fillColor;
+	svgNode.style.stroke = strokeColor;
+	svgNode.style.strokeWidth = strokeWidth;
+
+	return svgNode;
+}
+
 // •圆形 <circle>
 //	示例：<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
 function svgCircle(id, cx, cy, r, fillColor, strokeWidth, strokeColor){
@@ -66,6 +91,22 @@ function svgCircle(id, cx, cy, r, fillColor, strokeWidth, strokeColor){
 	
 	svg += '></circle>';
 	return svg;
+}
+
+function svgCircleNode(id, cx, cy, r, fillColor, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(XMLNS, "circle");
+	
+	svgNode.id = id;
+	
+	svgNode.setAttribute("cx", cx);
+	svgNode.setAttribute("cy", cy);
+	svgNode.setAttribute("r", r);
+
+	svgNode.style.fill = fillColor;
+	svgNode.style.stroke = strokeColor;
+	svgNode.style.strokeWidth = strokeWidth;
+
+	return svgNode;
 }
 
 // •椭圆 <ellipse>
@@ -90,6 +131,23 @@ function svgEllipse(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor) {
 	return svg;
 }
 
+function svgEllipseNode(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor) {
+	var svgNode = document.createElementNS(XMLNS, "ellipse");
+	
+	svgNode.id = id;
+	
+	svgNode.setAttribute("cx", cx);
+	svgNode.setAttribute("cy", cy);
+	svgNode.setAttribute("rx", rx);
+	svgNode.setAttribute("rx", rx);
+
+	svgNode.style.fill = fillColor;
+	svgNode.style.stroke = strokeColor;
+	svgNode.style.strokeWidth = strokeWidth;
+
+	return svgNode;
+}
+
 // •线 <line>
 // 示例：<line x1="0" y1="0" x2="300" y2="300" style="stroke:rgb(99,99,99);stroke-width:2"/>
 function svgLine(id, x1, y1, x2, y2, strokeWidth, strokeColor){
@@ -107,6 +165,23 @@ function svgLine(id, x1, y1, x2, y2, strokeWidth, strokeColor){
 
 	svg +=    '></line>';
 	return svg;
+}
+
+function svgLineNode(id, x1, y1, x2, y2, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(XMLNS, "line");
+	
+	svgNode.id = id;
+	
+	svgNode.setAttribute("x1", x1);
+	svgNode.setAttribute("y1", y1);
+	svgNode.setAttribute("x2", x2);
+	svgNode.setAttribute("y2", y2);
+
+	svgNode.style.stroke = strokeColor;
+	svgNode.style.strokeWidth = strokeWidth;
+
+	return svgNode;
+
 }
 
 // •多边形 <polygon>
@@ -128,12 +203,26 @@ function svgPolygon(id, points, fillColor, strokeWidth, strokeColor){
 	return svg;
 }
 
+function svgPolygonNode(id, points, fillColor, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(XMLNS, "polygon");
+	
+	svgNode.id = id;
+	
+	svgNode.setAttribute("points", points);
+
+	svgNode.style.fill = fillColor;
+	svgNode.style.stroke = strokeColor;
+	svgNode.style.strokeWidth = strokeWidth;
+
+	return svgNode;
+}
+
 // •折线 <polyline>
 // 示例：<polyline points="0,0 0,20 20,20 20,40 40,40 40,60" style="fill:white;stroke:red;stroke-width:2"/>
-function svgPolyLine(id, points, fillColor, strokeWidth, strokeColor){
+function svgPolyline(id, points, fillColor, strokeWidth, strokeColor){
 	var svg = '<polyline id="' + id + '"';
 
-	svg += points;
+	svg += ' points="' + points + '"';
 
 	// 颜色 
 	svg +=    ' style="fill:' + fillColor + ';';
@@ -144,6 +233,21 @@ function svgPolyLine(id, points, fillColor, strokeWidth, strokeColor){
 
 	svg +=    '></polyline>';
 	return svg;
+}
+
+function svgPolylineNode(id, points, fillColor, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(XMLNS, "polyline");
+	
+	svgNode.id = id;
+	
+	svgNode.setAttribute("points", points);
+
+	svgNode.style.fill = fillColor;
+	svgNode.style.stroke = strokeColor;
+	svgNode.style.strokeWidth = strokeWidth;
+
+	return svgNode;
+
 }
 
 // •路径 <path>
@@ -191,6 +295,20 @@ function svgPath(id, d, strokeWidth, strokeColor) {
 	svg += '></path>';
 	return svg;
 }
+
+function svgPathNode(id, d, strokeWidth, strokeColor) {
+	var svgNode = document.createElementNS(XMLNS, "path");
+	
+	svgNode.id = id;
+	
+	svgNode.setAttribute("d", d);
+
+	svgNode.style.stroke = strokeColor;
+	svgNode.style.strokeWidth = strokeWidth;
+
+	return svgNode;
+}
+
 
 /* 滤镜 */
 // 说明：滤镜是CSS的一种样式，两者配合使用，效果最佳。
