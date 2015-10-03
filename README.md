@@ -8,62 +8,58 @@
 
 函数类型：
 
-- svgXxxx :  返回SVG格式的**字符串**
-
-    基本用法：用'+'拼接后赋值给innerHTML使用。
-
-        xxxx.innerHTML = SVG头 + 滤镜 + 基本形状 + SVG尾;
-
 - svgXxxx**Node**: 返回SVG**节点**
 
-	基本用法：创建节点后添加到SVG环境下
+		基本用法：创建节点后添加到SVG环境下
+
+    	// 创建根节点
+    	var svgRoot = svgRootNode("svg01", "100%", "100%");
+    	root.appendChild(svgRoot);
+    
+    	// 创建SVG形状
+    	var c1 = svgCircleNode("c02", 200, 100, 50, "rgba(5,100,10,0.4)", 0, "yellow");
+    	svgRoot.appendChild(c1);
+    
+    	// 给SVG形状添加事件
+    	c1.onclick = clickMe;
+    	c1.onmouseover = touchMe;
 
 ----
 ## 通用
 
-- SVG头
+- SVG根节点
 
-        svgHEAD(id, height)
+		svgRootNode(id, width, height);
 
-- SVG尾
-
-        svgFOOT()
-
-## 基本形状
+## 基本形状节点
 
 - 矩形
 
-        svgRect(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor);
 		svgRectNode(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor);
 
 - 圆形
 
-        svgCircle(id, cx, cy, r, fillColor, strokeWidth, strokeColor);
+
 		svgCircleNode(id, cx, cy, r, fillColor, strokeWidth, strokeColor);
 
 - 椭圆形
 
-        svgEllipse(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor);
 		svgEllipseNode(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor);
 
 - 线段
 
-        svgLine(id, x1, y1, x2, y2, strokeWidth, strokeColor);
 		svgLineNode(id, x1, y1, x2, y2, strokeWidth, strokeColor);
 
 - 多边形
 
-        svgPolygon(id, points, fillColor, strokeWidth, strokeColor);
 		svgPolygonNode(id, points, fillColor, strokeWidth, strokeColor);
 
 - 折线
 
-        svgPolyline(id, points, fillColor, strokeWidth, strokeColor);
 		svgPolylineNode(id, points, fillColor, strokeWidth, strokeColor);
 
 - 路径
 
-        svgPath(id, d, strokeWidth, strokeColor);
 		svgPathNode(id, d, strokeWidth, strokeColor);
 
 
