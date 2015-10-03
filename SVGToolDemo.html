@@ -2,45 +2,38 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=unicode" />
 <script src="SVGTool.js"></script>
-<style>
-#rect01 {
-	filter:url(#Gaussian_Blur);
-}
-
-</style>
-
 <script>
 
-function clickMe()
-{
+function clickMe() {
 	alert("!");
+}
+
+function touchMe() {
+	this.style.fill = "yellow";
 }
 
 function init()
 {
-	var rect01 ='<a href="http://www.duzixi.com">'+ svgRect("rect01",0, 0, 50,50, 100, 200, "red", 2, "#010101")+'</a>' ;
+	// 创建根节点
+	var svgRoot = svgRootNode("svg01", "100%", "100%");
+	root.appendChild(svgRoot);
+
+	// 创建SVG形状
+	var c1 = svgCircleNode("c02", 200, 100, 50, "rgba(5,100,10,0.4)", 0, "yellow");
+	svgRoot.appendChild(c1);
+
+	// 添加事件
+	c1.onclick = clickMe;
+	c1.onmouseover = touchMe;
 	
-	var circle01 = svgCircle("c01", 100, 100, 50, "rgba(5,10,100,0.4)", 0, "yellow");
-	
-	// var ellipse01 = svgEllipse(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor);
-
-
-	root.innerHTML = svgHEAD("svg001", "100%") + filterGuassianBlur("Gaussian_Blur", 10) + rect01 + circle01 + svgFOOT();
-
-	var svg001 = document.getElementById("svg001");
-	var circle02 = svgCircleNode("c02", 200, 100, 50, "rgba(5,100,10,0.4)", 0, "yellow");
-	svg001.appendChild(circle02);
 }
-
-
 
 </script>
 
 </head>
 
 <body onload = "init();">
-<div id ="root"></div>
-
+<div id="root"></div>
 
 </body>
 </html>
