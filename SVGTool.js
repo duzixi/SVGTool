@@ -250,13 +250,15 @@ function fillLinearGradient(id, x1, y1, x2, y2, offsets, colors) {
 // </radialGradient>
 // </defs>
 
-// ------------------- 临时参考 ------------------------
-/*
-元素类型  NodeType
+function radialGradient(id, cx, cy, r, fx, fy, offsets, colors){
+	
+}
 
-元素 1 
-属性 2 
-文本 3 
-注释 8 
-文档 9 
-*/
+// ------------------- 交互变换 ------------------------
+
+// 交换填充色和描边色（技巧：描边粗细设置为0可以达到变换颜色的效果）
+function swapColor() {
+	var tempColor = this.style.fill;
+	this.style.fill = this.style.stroke;
+	this.style.stroke = tempColor;
+}
