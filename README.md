@@ -74,3 +74,9 @@
 - 线性渐变
 
         fillLinearGradient(id, x1, y1, x2, y2, offsets, colors);
+
+## 交互变换
+
+- 交换填充色和描边色
+
+	swapColor();
