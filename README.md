@@ -11,33 +11,35 @@ Ver 2.0 2017.09.11
 
 ## 使用方法
 
-STEP 00: 在<head>标签中引入SVGTool.js
+### STEP 00: 在head标签中引入SVGTool.js
 
     <script src="SVGTool.js"></script>
 
-STEP 01：在<body>标签中添加root节点
+### STEP 01：在body标签中添加root节点
 
     <div id="root"></div>
 
     id值必须为"root",否则创建根节点时会出错
 
-STEP 02：在初始化函数中创建根节点
+### STEP 02：在初始化函数中创建根节点
 
     <body onload = "init()">
 
-//------------------------------
-<script>
-var svg; // <---- 定义全局变量方便其它函数调用
-    function init()
-    {
-        svg = new SVG("svg01", "100%", "100%");
-    }
-</script>
+    //------------------------------
+    <script>
+        var svg; // <---- 定义全局变量方便其它函数调用
+        function init()
+        {
+            svg = new SVG("svg01", "100%", "100%");
+        }
+    </script>
 
-STEP 03：添加想要的图形
+### STEP 03：添加想要的图形
+
     var c1 = svg.addCircleNode("c02", 200, 100, 50, "rgba(5,100,10,0.4)", 0, "yellow");
 
-STEP 04：添加需要的事件
+### STEP 04：添加需要的事件
+
     c1.onclick = function () { alert("!")};
 
 ----
@@ -49,8 +51,8 @@ STEP 04：添加需要的事件
 - SVG(id, width, height)
 
 
-通用形式
-- addXxxx**Node: 添加并返回SVG**节点, 由全局对象svg调用。
+通用形式：
+- addXxxxNode: 添加并返回SVG节点, 由全局对象svg调用。
 
 
 ----

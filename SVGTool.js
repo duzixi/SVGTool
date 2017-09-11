@@ -23,6 +23,7 @@ function SVG(id, width, height) {
 	this.rootNode = svgNode;
 	this.defsNode = document.createElement("defs");
 	this.rootNode.appendChild(this.defsNode);
+	this.nodeNum = 0;
 }
 
 /* 基本形状 */
