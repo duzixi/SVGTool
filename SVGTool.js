@@ -291,9 +291,28 @@ SVG.prototype.radialGradient = function (id, cx, cy, r, fx, fy, offsets, colors,
 
 // ------------------- 交互变换 ------------------------
 
+// 获取鼠标位置
+function getMousePos(event) {
+    var e = event || window.event;
+    var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+    var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+    var x = e.pageX || e.clientX + scrollX;
+    var y = e.pageY || e.clientY + scrollY;
+    // alert('x: ' + x + '\ny: ' + y);
+    return { 'x': x, 'y': y };
+}
+
 // 交换填充色和描边色（技巧：描边粗细设置为0可以达到变换颜色的效果）
 function swapColor() {
 	var tempColor = this.style.fill;
 	this.style.fill = this.style.stroke;
 	this.style.stroke = tempColor;
+}
+
+/* 添加字符串 */
+SVG.prototype.addString = function (x, y, str) {
+	var divNode = document.createElement("div");
+	root.appendChild(divNode);
+	divNode.setAttribute("style","position: absolute;left:" + x + "px;top:" + y + "px;");
+	divNode.innerHTML = str;
 }
