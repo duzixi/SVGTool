@@ -10,13 +10,11 @@ function clickMe() {
 
 function init()
 {
-	// 创建根节点
-	var svgRoot = svgRootNode("svg01", "100%", "100%");
-	root.appendChild(svgRoot);
+	// 创建SVG对象及根节点
+	var svg = new SVG("svg01", "100%", "100%");
 
 	// 创建SVG形状
-	var c1 = svgCircleNode("c02", 200, 100, 50, "rgba(5,100,10,0.4)", 0, "yellow");
-	svgRoot.appendChild(c1);
+	var c1 = svg.addCircleNode("c02", 200, 100, 50, "rgba(5,100,10,0.4)", 0, "yellow");
 
 	// 添加事件
 	c1.onclick = clickMe;

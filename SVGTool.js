@@ -1,33 +1,35 @@
 //
 // SVGTool.js
 // 
-// (C) 2015 duzixi.com
+// (C) 2015-2017 duzixi.com
 // 
 // 2015.10.03 Created by 杜子兮
+// 2017.09.08 Edited by 杜子兮 实现面向对象封装
 // 
 // 封装了常用的SVG方法。
 // 包括：基本形状、滤镜、渐变填充等
 
 /* 通用 */
 
-// 命名空间
-var XMLNS = "http://www.w3.org/2000/svg";
-
-function svgRootNode(id, width, height) {
-	var svgNode = document.createElementNS(XMLNS, "svg");
+function SVG(id, width, height) {
+	this.XMLNS = "http://www.w3.org/2000/svg"; // 命名空间
+	var svgNode = document.createElementNS(this.XMLNS, "svg");
 	svgNode.id = id;
-	svgNode.setAttribute("xmlns", XMLNS);
+	svgNode.setAttribute("xmlns", this.XMLNS);
 	svgNode.setAttribute("version", "1.1");
 	svgNode.setAttribute("width", width);
 	svgNode.setAttribute("height", height);
-	return svgNode;
+	root.appendChild(svgNode);
+	this.rootNode = svgNode;
+	this.defsNode = document.createElement("defs");
+	this.rootNode.appendChild(this.defsNode);
 }
 
 /* 基本形状 */
 
 // •矩形 <rect>
-function svgRectNode(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor){
-	var svgNode = document.createElementNS(XMLNS, "rect");
+SVG.prototype.addRectNode = function (id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(this.XMLNS, "rect");
 	
 	svgNode.id = id;
 	
@@ -41,14 +43,14 @@ function svgRectNode(id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor
 	svgNode.style.fill = fillColor;
 	svgNode.style.stroke = strokeColor;
 	svgNode.style.strokeWidth = strokeWidth;
-
+	this.rootNode.appendChild(svgNode);
 	return svgNode;
 }
 
 // •圆形 <circle>
 //	示例：<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
-function svgCircleNode(id, cx, cy, r, fillColor, strokeWidth, strokeColor){
-	var svgNode = document.createElementNS(XMLNS, "circle");
+SVG.prototype.addCircleNode =  function (id, cx, cy, r, fillColor, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(this.XMLNS, "circle");
 	
 	svgNode.id = id;
 	
@@ -59,14 +61,14 @@ function svgCircleNode(id, cx, cy, r, fillColor, strokeWidth, strokeColor){
 	svgNode.style.fill = fillColor;
 	svgNode.style.stroke = strokeColor;
 	svgNode.style.strokeWidth = strokeWidth;
-
+	this.rootNode.appendChild(svgNode);
 	return svgNode;
 }
 
 // •椭圆 <ellipse>
 //  示例：<ellipse cx="300" cy="150" rx="200" ry="80" style="fill:rgb(200,100,50); stroke:rgb(0,0,100);stroke-width:2"/>
-function svgEllipseNode(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor) {
-	var svgNode = document.createElementNS(XMLNS, "ellipse");
+SVG.prototype.addEllipseNode = function (id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor) {
+	var svgNode = document.createElementNS(this.XMLNS, "ellipse");
 	
 	svgNode.id = id;
 	
@@ -78,14 +80,14 @@ function svgEllipseNode(id, cx, cy, rx, ry, fillColor, strokeWidth, strokeColor)
 	svgNode.style.fill = fillColor;
 	svgNode.style.stroke = strokeColor;
 	svgNode.style.strokeWidth = strokeWidth;
-
+	this.rootNode.appendChild(svgNode);
 	return svgNode;
 }
 
 // •线 <line>
 // 示例：<line x1="0" y1="0" x2="300" y2="300" style="stroke:rgb(99,99,99);stroke-width:2"/>
-function svgLineNode(id, x1, y1, x2, y2, strokeWidth, strokeColor){
-	var svgNode = document.createElementNS(XMLNS, "line");
+SVG.prototype.addLineNode = function (id, x1, y1, x2, y2, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(this.XMLNS, "line");
 	
 	svgNode.id = id;
 	
@@ -96,15 +98,14 @@ function svgLineNode(id, x1, y1, x2, y2, strokeWidth, strokeColor){
 
 	svgNode.style.stroke = strokeColor;
 	svgNode.style.strokeWidth = strokeWidth;
-
+	this.rootNode.appendChild(svgNode);
 	return svgNode;
-
 }
 
 // •多边形 <polygon>
 // 示例：<polygon points="220,100 300,210 170,250" style="fill:#cccccc; stroke:#000000;stroke-width:1"/>
-function svgPolygonNode(id, points, fillColor, strokeWidth, strokeColor){
-	var svgNode = document.createElementNS(XMLNS, "polygon");
+SVG.prototype.addPolygonNode = function (id, points, fillColor, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(this.XMLNS, "polygon");
 	
 	svgNode.id = id;
 	
@@ -113,14 +114,14 @@ function svgPolygonNode(id, points, fillColor, strokeWidth, strokeColor){
 	svgNode.style.fill = fillColor;
 	svgNode.style.stroke = strokeColor;
 	svgNode.style.strokeWidth = strokeWidth;
-
+	this.rootNode.appendChild(svgNode);
 	return svgNode;
 }
 
 // •折线 <polyline>
 // 示例：<polyline points="0,0 0,20 20,20 20,40 40,40 40,60" style="fill:white;stroke:red;stroke-width:2"/>
-function svgPolylineNode(id, points, fillColor, strokeWidth, strokeColor){
-	var svgNode = document.createElementNS(XMLNS, "polyline");
+SVG.prototype.addPolylineNode = function (id, points, fillColor, strokeWidth, strokeColor){
+	var svgNode = document.createElementNS(this.XMLNS, "polyline");
 	
 	svgNode.id = id;
 	
@@ -129,7 +130,7 @@ function svgPolylineNode(id, points, fillColor, strokeWidth, strokeColor){
 	svgNode.style.fill = fillColor;
 	svgNode.style.stroke = strokeColor;
 	svgNode.style.strokeWidth = strokeWidth;
-
+	this.rootNode.appendChild(svgNode);
 	return svgNode;
 
 }
@@ -157,8 +158,8 @@ C131 350 142 364 156 364 C175 364 191 350 191 334 C191 311 175 294 156 294 C131 
 C186 384 211 361 211 334 C211 300 186 274 156 274"
 style="fill:white;stroke:red;stroke-width:2"/>
 */
-function svgPathNode(id, d, strokeWidth, strokeColor) {
-	var svgNode = document.createElementNS(XMLNS, "path");
+SVG.prototype.addPathNode = function (id, d, strokeWidth, strokeColor) {
+	var svgNode = document.createElementNS(this.XMLNS, "path");
 	
 	svgNode.id = id;
 	
@@ -167,6 +168,7 @@ function svgPathNode(id, d, strokeWidth, strokeColor) {
 	svgNode.style.stroke = strokeColor;
 	svgNode.style.strokeWidth = strokeWidth;
 
+	this.rootNode.appendChild(svgNode);
 	return svgNode;
 }
 
@@ -201,11 +203,20 @@ function svgPathNode(id, d, strokeWidth, strokeColor) {
 //	   <defs><filter id="Gaussian_Blur"><feGaussianBlur in="SourceGraphic" stdDeviation="10" /></filter></defs>
 // CSS:
 //	   filter:url(#Gaussian_Blur);
-function filterGuassianBlur(id, r) {
-	var filter = '<defs><filter id="' + id + '">';
-	filter += '<feGaussianBlur in="SourceGraphic" stdDeviation="' + r + '" /></filter></defs>';
-	return filter;
+SVG.prototype.filterGuassianBlur = function (id, r) {
 
+	var filterNode = document.createElement("filter");
+	filterNode.setAttribute("id", id);
+	this.defsNode.appendChild(filterNode);
+
+	var feNode = document.createElement("feGaussianBlur");
+	feNode.setAttribute("in", "SourceGraphic");
+	feNode.setAttribute("stdDeviation", r);
+	filterNode.appendChild(feNode);
+
+	// var filter = '<defs><filter id="' + id + '">';
+	// filter += '<feGaussianBlur in="SourceGraphic" stdDeviation="' + r + '" /></filter></defs>';
+	// return filter;
 }
 
 // 添加文字
@@ -224,34 +235,58 @@ function filterGuassianBlur(id, r) {
 	// </defs>
 // CSS:
 	// fill:url(#orange_red)
-function fillLinearGradient(id, x1, y1, x2, y2, offsets, colors) {
-	var fill = '<defs>';
-	fill += '<linearGradient id="' + id + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '">';
-
+SVG.prototype.fillLinearGradient = function (id, x1, y1, x2, y2, offsets, colors) {
+	var filterNode = document.createElement("linearGradient");
+	this.defsNode.appendChild(filterNode);
+	filterNode.setAttribute("id", id);
+	filterNode.setAttribute("x1", x1);
+	filterNode.setAttribute("y1", y1);
+	filterNode.setAttribute("x2", x2);
+	filterNode.setAttribute("y2", y2);
 	for(var i = 0; i < offsets.length; i++){
-		fill += ' <stop offset="'+offsets[i]+'%" style="stop-color:'+colors[i]+'"/>';
+		var stopNode = document.createElement("stop");
+		filterNode.appendChild(stopNode);
+		stopNode.setAttribute("offset", offsets[i]);
+		stopNode.setAttribute("stype", "stop-color:" + colors[i]);
 	}
 
-	fill += '</linearGradient>';
-	fill += '</defs>';
-	return fill;
+	// var fill = '<defs>';
+	// fill += '<linearGradient id="' + id + '" x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '">';
+
+	// for(var i = 0; i < offsets.length; i++){
+	// 	fill += ' <stop offset="'+offsets[i]+'%" style="stop-color:'+colors[i]+'"/>';
+	// }
+
+	// fill += '</linearGradient>';
+	// fill += '</defs>';
+	// return fill;
 }
 
 // 放射性渐变
 // 示例：
 // SVG:
 // <defs>
-// <radialGradient id="grey_blue" cx="50%" cy="50%" r="50%"
-// fx="50%" fy="50%">
-// <stop offset="0%" style="stop-color:rgb(200,200,200);
-// stop-opacity:0"/>
-// <stop offset="100%" style="stop-color:rgb(0,0,255);
-// stop-opacity:1"/>
+// <radialGradient id="grey_blue" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+// <stop offset="0%" style="stop-color:rgb(200,200,200); stop-opacity:0"/>
+// <stop offset="100%" style="stop-color:rgb(0,0,255); stop-opacity:1"/>
 // </radialGradient>
 // </defs>
 
-function radialGradient(id, cx, cy, r, fx, fy, offsets, colors){
-	
+SVG.prototype.radialGradient = function (id, cx, cy, r, fx, fy, offsets, colors, opacities){
+	var filterNode = document.createElement("radialGradient");
+	this.defsNode.appendChild(filterNode);
+	filterNode.setAttribute("id", id);
+	filterNode.setAttribute("cx", cx);
+	filterNode.setAttribute("cy", cy);
+	filterNode.setAttribute("r", r);
+	filterNode.setAttribute("fx", fx);
+	filterNode.setAttribute("fy", fy);
+	for(var i = 0; i < offsets.length; i++){
+		var stopNode = document.createElement("stop");
+		filterNode.appendChild(stopNode);
+		stopNode.setAttribute("offset", offsets[i]);
+		stopNode.setAttribute("stype", "stop-color:" + colors[i] + "; stop-opacity:" + opacities[i]);
+	}
 }
 
 // ------------------- 交互变换 ------------------------
