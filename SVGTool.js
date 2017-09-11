@@ -296,6 +296,7 @@ SVG.prototype.addString = function (x, y, str) {
 	root.appendChild(divNode);
 	divNode.setAttribute("style","position: absolute;left:" + x + "px;top:" + y + "px;");
 	divNode.innerHTML = str;
+	return divNode;
 }
 
 // ------------------- 交互变换 ------------------------
@@ -318,3 +319,18 @@ function swapColor() {
 	this.style.stroke = tempColor;
 }
 
+// 判断是PC端还是移动端 PC端：true 移动端：false
+function IsPC() {
+    var userAgentInfo = navigator.userAgent;
+    var Agents = ["Android", "iPhone",
+                "SymbianOS", "Windows Phone",
+                "iPad", "iPod"];
+    var flag = true;
+    for (var v = 0; v < Agents.length; v++) {
+        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+            flag = false;
+            break;
+        }
+    }
+    return flag;
+}

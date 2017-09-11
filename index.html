@@ -3,46 +3,77 @@
 <meta http-equiv="Content-Type" content="text/html; charset=unicode" />
 <script src="SVGTool.js"></script>
 <script>
-// 创建SVG对象及根节点
-
-
-function clickMe() {
-	alert("!");
-}
-
-
-
+// 存储SVG对象及根节点
 var svg;
+var isPC;
+var unit = 20;
+var oX;
+var oY;
 
-// addCircleNode =  function (id, cx, cy, r, fillColor, strokeWidth, strokeColor)
-function addPoint() {
-	// alert("addPoint");
-	var mousePos = getMousePos();
-	var c = svg.addCircleNode("c03", mousePos.x -7, mousePos.y-7, 3, "rgba(0,0,200,1)", 0, "red");
+// 按一下添加一个小圆点
+function addPoint(event) {
+	var eventX, eventY;
+	if (isPC) {
+		var mousePos = getMousePos(event);
+		eventX = mousePos.x;
+		eventY = mousePos.y;
+	} else {
+		event.preventDefault();
+			var touch = event.targetTouches[0];
+			eventX = touch.pageX;
+			eventY = touch.pageY;
+	}
+
+	var c = svg.addCircleNode("c" + svg.nodeNum++, eventX - 7, eventY - 7, 3, "rgba(0,0,200,1)", 0, "red");
+	if (isPC) {
+		//c.onmouseover = swapColor;
+		//c.onmouseout = swapColor;
+		c.onmouseover = showTip;
+		c.onmouseout = hideTip;
+	}
+	// 计算对应坐标系的x y
+	c.x = (eventX - oX - 7 - 1.5) / unit; 
+	c.y = (oY - eventY + 7 + 1.5) / unit;
+	
+	// c.setAttribute("alt", x + "," + y);
 }
 
+function showTip()
+{
+	swapColor();
+	if (!this.tip) {
+		this.tip = svg.addString(this.getAttribute("cx"), (this.getAttribute("cy") - 0 - 10),
+							 this.x.toFixed(1) + "," + this.y.toFixed(1));
+	} else {
+		this.tip.style.visibility = "visible";
+	}
+}
+
+function hideTip()
+{
+	swapColor();
+	if (this.tip) {
+		this.tip.style.visibility = "hidden";
+	}
+}
 
 function init()
 {
-	// alert("preventDefault");
- 
-	document.body.addEventListener('touchstart', function(event) {
- 		event.preventDefault();
- 		// alert("start!");
- 		var touch = event.targetTouches[0];
- 		var c = svg.addCircleNode("c" + svg.nodeNum, touch.pageX -7, touch.pageY-7, 3, "rgba(0,0,200,1)", 0, "red");
-	}, false); 
- 
-
 	svg = new SVG("svg01", "100%", "100%");
 
-	var oY = document.documentElement.clientHeight / 2;
-	var oX = document.documentElement.clientWidth / 2;
+	// 添加响应事件，按一下添加一个小圆点
+	isPC = IsPC();
+	document.body.addEventListener(isPC ? 'click':'touchstart', addPoint, false); 
+
+	// 画出坐标系
+	oY = document.documentElement.clientHeight / 2;
+	oX = document.documentElement.clientWidth / 2;
+
 	// addLineNode = function (id, x1, y1, x2, y2, strokeWidth, strokeColor)
 	var l1 = svg.addLineNode("l001", oX, 0, oX, oY * 2, 2, "black");
 	var l2 = svg.addLineNode("l002", 0, oY, oX * 2, oY, 2, "black");
 
-	var unit = 20;
+	
 	for (var i = Math.round(oX / unit); i >= - Math.round(oX / unit); i--) {
 		svg.addString(oX - i * unit, oY + 7, -i);
 		if (i == 0 ) { continue; }
@@ -56,16 +87,6 @@ function init()
 		svg.addString(oX - 9  , oY - i * unit, i);
 	}
 
-	/*
-	// 创建SVG形状
-	var c1 = svg.addCircleNode("c02", 200, 100, 50, "rgba(5,100,10,0.4)", 0, "yellow");
-
-	// 添加事件
-	c1.onclick = getMousePos;
-	c1.onmouseover = swapColor;
-	c1.onmouseout = swapColor;
-	*/
-
 }
 
 
@@ -73,7 +94,7 @@ function init()
 
 </head>
 
-<body onload = "init()" onclick="addPoint()" style = "padding: 0px">
+<body onload = "init()" style = "padding: 0px">
 <div id="root"></div>
 
 </body>
