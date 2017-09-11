@@ -289,6 +289,14 @@ SVG.prototype.radialGradient = function (id, cx, cy, r, fx, fy, offsets, colors,
 	}
 }
 
+/* 添加字符串 */
+SVG.prototype.addString = function (x, y, str) {
+	var divNode = document.createElement("div");
+	root.appendChild(divNode);
+	divNode.setAttribute("style","position: absolute;left:" + x + "px;top:" + y + "px;");
+	divNode.innerHTML = str;
+}
+
 // ------------------- 交互变换 ------------------------
 
 // 获取鼠标位置
@@ -309,10 +317,3 @@ function swapColor() {
 	this.style.stroke = tempColor;
 }
 
-/* 添加字符串 */
-SVG.prototype.addString = function (x, y, str) {
-	var divNode = document.createElement("div");
-	root.appendChild(divNode);
-	divNode.setAttribute("style","position: absolute;left:" + x + "px;top:" + y + "px;");
-	divNode.innerHTML = str;
-}
