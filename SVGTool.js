@@ -313,10 +313,10 @@ function getMousePos(event) {
 }
 
 // 交换填充色和描边色（技巧：描边粗细设置为0可以达到变换颜色的效果）
-function swapColor() {
-	var tempColor = this.style.fill;
-	this.style.fill = this.style.stroke;
-	this.style.stroke = tempColor;
+function swapColor(obj) {
+	var tempColor = obj.style.fill;
+	obj.style.fill = obj.style.stroke;
+	obj.style.stroke = tempColor;
 }
 
 // 判断是PC端还是移动端 PC端：true 移动端：false
