@@ -2,6 +2,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=unicode" />
 <script src="SVGTool.js"></script>
+<script src="XML.js"></script>
 <script>
 // 存储SVG对象及根节点
 var svg;
@@ -55,17 +56,49 @@ function hideTip()
 	}
 }
 
-function init()
-{
+function loadXmlImage(){
+	var polyXml = new XML("poly");
 	svg = new SVG("svg01", "100%", "100%");
 
+	for(var i = 0; i < polyXml.root.childNodes.length; i++) { 
+		var node = polyXml.root.childNodes[i];
+		if (node.nodeName == "point") {
+			//	示例：<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
+			// SVG.prototype.addCircleNode =  function (id, cx, cy, r, fillColor, strokeWidth, strokeColor)
+			var x = node.getAttribute("x");
+			var y = node.getAttribute("y");
+
+			svg.addCircleNode("cir" + i, xToScreenX(x), yToScreenY(y), 3 , "red", 0 , "#000000");
+
+		} else if (node.nodeName == "polygon") {
+
+			// alert(polyXml.root.childNodes[i].childNodes.length);
+			// 示例：<polygon points="220,100 300,210 170,250" style="fill:#cccccc; stroke:#000000;stroke-width:1"/>
+			// SVG.prototype.addPolygonNode = function (id, points, fillColor, strokeWidth, strokeColor)
+
+			var pointsStr = "";
+			for (var j = 0; j < node.childNodes.length; j++) {
+				var x = node.childNodes[j].getAttribute("x");
+				var y = node.childNodes[j].getAttribute("y");
+				pointsStr += xToScreenX(x) + "," + yToScreenY(y) + " ";
+			}
+			svg.addPolygonNode("poly" + i, pointsStr, "none", 2, "#000000");
+		}
+	}
+}
+
+function init()
+{
+	// 计算坐标原点
+	// 注意：这个要先算，否则会出现计算错误
+	oY = document.documentElement.clientHeight / 2;
+	oX = document.documentElement.clientWidth / 2;
+	
 	// 添加响应事件，按一下添加一个小圆点
 	isPC = IsPC();
 	document.body.addEventListener(isPC ? 'click':'touchstart', addPoint, false); 
 
-	// 画出坐标系
-	oY = document.documentElement.clientHeight / 2;
-	oX = document.documentElement.clientWidth / 2;
+	loadXmlImage();
 
 	// addLineNode = function (id, x1, y1, x2, y2, strokeWidth, strokeColor)
 	var l1 = svg.addLineNode("l001", oX, 0, oX, oY * 2, 2, "black");
@@ -85,6 +118,18 @@ function init()
 		svg.addString(oX - 9  , oY - i * unit, i);
 	}
 
+}
+
+function xToScreenX(x)
+{
+	// alert("x:" +  oX - (x - 0) * unit);
+	return oX - (x - 0) * unit;
+} 
+
+function yToScreenY(y)
+{
+	// alert("y:" + oY - (y - 0) * unit);
+	return oY - (y - 0) * unit;
 }
 
 
