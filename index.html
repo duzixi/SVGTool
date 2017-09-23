@@ -7,9 +7,6 @@
 // 存储SVG对象及根节点
 var svg;
 var isPC;
-var unit = 20;
-var oX;
-var oY;
 
 // 按一下添加一个小圆点
 function addPoint(event) {
@@ -31,10 +28,9 @@ function addPoint(event) {
 		c.onmouseout = hideTip;
 	}
 	// 计算对应坐标系的x y
-	c.x = (eventX - oX - 7 - 1.5) / unit; 
-	c.y = (oY - eventY + 7 ) / unit;
+	c.x = (eventX - svg.oX - 7 - 1.5) / svg.unit; 
+	c.y = (svg.oY - eventY + 7 ) / svg.unit;
 	
-	// c.setAttribute("alt", x + "," + y);
 }
 
 function showTip()
@@ -58,78 +54,53 @@ function hideTip()
 
 function loadXmlImage(){
 	var polyXml = new XML("poly");
-	svg = new SVG("svg01", "100%", "100%");
-
+	
 	for(var i = 0; i < polyXml.root.childNodes.length; i++) { 
 		var node = polyXml.root.childNodes[i];
 		if (node.nodeName == "point") {
-			//	示例：<circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/>
-			// SVG.prototype.addCircleNode =  function (id, cx, cy, r, fillColor, strokeWidth, strokeColor)
 			var x = node.getAttribute("x");
 			var y = node.getAttribute("y");
 
-			svg.addCircleNode("cir" + i, xToScreenX(x), yToScreenY(y), 3 , "red", 0 , "#000000");
+			var p = new Point(x, y);
+			p.fillColor = "green";
+			svg.add(p);
 
 		} else if (node.nodeName == "polygon") {
-
-			// alert(polyXml.root.childNodes[i].childNodes.length);
-			// 示例：<polygon points="220,100 300,210 170,250" style="fill:#cccccc; stroke:#000000;stroke-width:1"/>
-			// SVG.prototype.addPolygonNode = function (id, points, fillColor, strokeWidth, strokeColor)
-
-			var pointsStr = "";
+			var vertices = new Array();
 			for (var j = 0; j < node.childNodes.length; j++) {
 				var x = node.childNodes[j].getAttribute("x");
 				var y = node.childNodes[j].getAttribute("y");
-				pointsStr += xToScreenX(x) + "," + yToScreenY(y) + " ";
+				vertices[vertices.length] = new Point(x, y);
 			}
-			svg.addPolygonNode("poly" + i, pointsStr, "none", 2, "#000000");
+			var poly = new Polygon(vertices);
+			poly.fillColor = "none";
+			svg.add(poly);
 		}
 	}
 }
 
 function init()
 {
-	// 计算坐标原点
-	// 注意：这个要先算，否则会出现计算错误
-	oY = document.documentElement.clientHeight / 2;
-	oX = document.documentElement.clientWidth / 2;
-	
+	svg = new SVG("svg01", "600px", "500px");
+
+	// 画出坐标系
+	svg.drawCoordinate();
+
+	var p1 = new Point(2,2);
+	var p2 = new Point(1,1);
+	var l1 = new Segment(p1, p2);
+
+	svg.add(p1);
+	svg.add(l1);
+	var l2 = new Segment(new Point(3,6), new Point(7,8));
+	svg.add(l2);
+
 	// 添加响应事件，按一下添加一个小圆点
 	isPC = IsPC();
 	document.body.addEventListener(isPC ? 'click':'touchstart', addPoint, false); 
 
 	loadXmlImage();
 
-	// addLineNode = function (id, x1, y1, x2, y2, strokeWidth, strokeColor)
-	var l1 = svg.addLineNode("l001", oX, 0, oX, oY * 2, 2, "black");
-	var l2 = svg.addLineNode("l002", 0, oY, oX * 2, oY, 2, "black");
-
-	
-	for (var i = Math.round(oX / unit); i >= - Math.round(oX / unit); i--) {
-		svg.addString(oX - i * unit, oY + 7, -i);
-		if (i == 0 ) { continue; }
-		svg.addLineNode("l01" + (i + 100), oX - i * unit, 0, oX - i * unit, oY * 2, 1, "gray");
-		
-	}
-
-	for (var i = Math.round(oY / unit); i >= - Math.round(oY / unit); i--) {
-		if (i == 0 ) { continue; }
-		svg.addLineNode("l02" + (i + 100), 0, oY - i * unit, oX * 2, oY - i * unit, 1, "gray");
-		svg.addString(oX - 9  , oY - i * unit, i);
-	}
-
-}
-
-function xToScreenX(x)
-{
-	// alert("x:" +  oX - (x - 0) * unit);
-	return oX - (x - 0) * unit;
-} 
-
-function yToScreenY(y)
-{
-	// alert("y:" + oY - (y - 0) * unit);
-	return oY - (y - 0) * unit;
 }
 
 

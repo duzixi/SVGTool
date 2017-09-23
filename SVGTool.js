@@ -5,13 +5,14 @@
 // 
 // 2015.10.03 Created by 杜子兮
 // 2017.09.08 Edited by 杜子兮 实现面向对象封装
+// 2017.09.23 Edited by 杜子兮 添加基本几何形状
 // 
 // 封装了常用的SVG方法。
 // 包括：基本形状、滤镜、渐变填充等
 
 /* 通用 */
 
-function SVG(id, width, height) {
+SVG = function (id, width, height) {
 	this.XMLNS = "http://www.w3.org/2000/svg"; // 命名空间
 	var svgNode = document.createElementNS(this.XMLNS, "svg");
 	svgNode.id = id;
@@ -24,9 +25,110 @@ function SVG(id, width, height) {
 	this.defsNode = document.createElement("defs");
 	this.rootNode.appendChild(this.defsNode);
 	this.nodeNum = 0;
+	this.oX = document.documentElement.clientWidth / 2;   // 对于每一个图坐标原点有可能不同
+	this.oY = document.documentElement.clientHeight / 2;
+	this.unit = 20; // 1个单位的线段的默认长度为20像素
 }
 
-/* 基本形状 */
+// 坐标点与屏幕像素点转换
+SVG.prototype.toScreenX = function (x) {
+	return this.oX + (x - 0) * this.unit;
+}
+
+SVG.prototype.toScreenY = function (y) {
+	return this.oY - (y - 0) * this.unit;
+}
+
+// 画坐标系底格
+SVG.prototype.drawCoordinate = function () {
+	var l1 = this.addLineNode("l001", this.oX, 0, this.oX, this.oY * 2, 2, "black");
+	var l2 = this.addLineNode("l002", 0, this.oY, this.oX * 2, this.oY, 2, "black");
+
+	
+	for (var i = Math.round(this.oX / this.unit); i >= - Math.round(this.oX / this.unit); i--) {
+		this.addString(this.oX - i * this.unit, this.oY + 7, -i);
+		if (i == 0 ) { continue; }
+		this.addLineNode("l01" + (i + 100), this.oX - i * this.unit, 0, this.oX - i * this.unit, this.oY * 2, 1, "gray");
+		
+	}
+
+	for (var i = Math.round(this.oY / this.unit); i >= - Math.round(this.oY / this.unit); i--) {
+		if (i == 0 ) { continue; }
+		this.addLineNode("l02" + (i + 100), 0, this.oY - i * this.unit, this.oX * 2, this.oY - i * this.unit, 1, "gray");
+		this.addString(this.oX - 9  , this.oY - i * this.unit, i);
+	}
+} 
+
+/* 基本几何定义 */
+// 点
+Point = function (x, y) {
+	this.id = "point" + Point.count ++;
+	this.x = x;  // 笛卡尔坐标
+	this.y = y;
+
+	this.size = 3;
+	this.fillColor = "black";
+	this.strokeWidth = 0;
+	this.strokeColor = "black";
+}
+Point.count = 0;
+
+Point.prototype.log = function () {
+	return this.id + ":" + this.x + "," + this.y;
+}
+
+// 线段
+Segment = function (p0, p1) {
+	this.id = "segment" + Segment.count ++;
+	this.p0 = p0;
+	this.p1 = p1;
+
+	this.strokeWidth = 1;
+	this.strokeColor = "black";
+}
+Segment.count = 0;
+
+Segment.prototype.getLength = function ()
+{
+	return Math.sqrt((this.p0.x - this.p1.x) * (this.p0.x - this.p1.x) + (this.p0.y - this.p1.y) * (this.p0.y - this.p1.y));
+}
+
+// 面
+Polygon = function (arrPoints) {
+	this.id = "polygon" + Polygon.count ++;
+	this.vertices = arrPoints; // 顶点数组
+
+	this.fillColor = "white";
+	this.strokeWidth = 1;
+	this.strokeColor = "black";
+}
+Polygon.count = 0;
+
+/* 通用绘制函数 */
+SVG.prototype.add = function (o)
+{
+	switch (o.constructor) {
+		case Point:
+			this.addCircleNode(o.id, this.toScreenX(o.x), this.toScreenY(o.y), 
+									 o.size, o.fillColor, o.strokeWidth, o.strokeColor);
+			break;
+		case Segment:
+			this.addLineNode(o.id, this.toScreenX(o.p0.x), this.toScreenY(o.p0.y), 
+							       this.toScreenX(o.p1.x), this.toScreenY(o.p1.y), 
+							       o.strokeWidth, o.strokeColor);
+			break;
+		case Polygon:
+			var pointsStr = "";
+			for (var i = 0; i < o.vertices.length; i++) {
+				pointsStr += svg.toScreenX(o.vertices[i].x) + "," + svg.toScreenY(o.vertices[i].y) + " ";
+			}
+			this.addPolygonNode(o.id, pointsStr, o.fillColor, o.strokeWidth, o.strokeColor);
+			break;
+	}
+}
+
+
+/* 绘制基本形状 */
 
 // •矩形 <rect>
 SVG.prototype.addRectNode = function (id, x, y, rx, ry, w, h, fillColor, strokeWidth, strokeColor){
@@ -63,6 +165,7 @@ SVG.prototype.addCircleNode =  function (id, cx, cy, r, fillColor, strokeWidth, 
 	svgNode.style.stroke = strokeColor;
 	svgNode.style.strokeWidth = strokeWidth;
 	this.rootNode.appendChild(svgNode);
+	// alert(cy);
 	return svgNode;
 }
 

@@ -17,13 +17,13 @@ XML = function (filePath) {
  		xmlDoc.async = false;
  		isOk = xmlDoc.load(this.filePath);
         xmlDoc.setProperty('SelectionLanguage','XPath'); 
-        this.browsertype = BrowserType.IE;
+        XML.browsertype = BrowserType.IE;
  	}catch(e){
  		try{ // Firefox, Mozilla, Opera, 其他浏览器
  			xmlDoc = document.implementation.createDocument("","",null);
  			xmlDoc.async = false;
  			isOk = xmlDoc.load(this.filePath);
-            this.browsertype = BrowserType.Firefox;
+            XML.browsertype = BrowserType.Firefox;
  		}catch(e){
  			try{ // Chrome,Safari 浏览器
  				var xmlhttp = new window.XMLHttpRequest();  
@@ -32,7 +32,7 @@ XML = function (filePath) {
                 // alert(xmlhttp.responseText); // 如果有responseText 但没有responseXML 就是XML格式或编码问题
          		xmlDoc = xmlhttp.responseXML;
          		isOk = true;
-                this.browsertype = BrowserType.Safari;
+                XML.browsertype = BrowserType.Safari;
      		} catch (e){  
      			isOk = false;
      		}  
@@ -53,7 +53,7 @@ XML.prototype.getRootName = function () {
 
 XML.prototype.getSingleNode = function(nodeName) {
     
-    if (this.browsertype == BrowserType.IE) {
+    if (XML.browsertype == BrowserType.IE) {
         return this.root.selectSingleNode(nodeName);
     } else {
         var nsResolver = this.xmlDoc.createNSResolver (this.root);
