@@ -79,8 +79,32 @@ function loadXmlImage(){
 	}
 }
 
+/* 继承测试 */
+Parent = function () {
+	this.value = true;
+}
+
+Parent.prototype.getParentValue = function () {
+	return this.value;
+}
+ 
+Child = function () {
+	this.property = false;
+}
+
+Child.prototype = new Parent ();
+Child.prototype.getChildValue = function () {
+	return this.value;
+}
+
+
 function init()
 {
+	var obj = new Child();
+	alert(obj.getParentValue());
+	alert(obj.getChildValue());
+
+
 	svg = new SVG("svg01", "600px", "500px");
 
 	// 画出坐标系
