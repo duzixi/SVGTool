@@ -59,6 +59,41 @@ SVG.prototype.drawCoordinate = function () {
 	}
 } 
 
+// 更新整个图（放大、缩小）
+SVG.prototype.scale = function (factor) {
+	// this.drawCoordinate();
+	// alert(this.rootNode.childNodes.length);
+	for (var i = 0; i <= this.rootNode.childNodes.length; i++) {
+		// alert(this.rootNode.childNodes[i].nodeName);
+		// if (i > 10) {return}
+		var svgNode = this.rootNode.childNodes[i];
+		
+		switch (svgNode.nodeName) {
+			case "line":
+				var x1 = (svgNode.getAttribute("x1") - this.oX) * factor + this.oX;
+				var y1 = (svgNode.getAttribute("y1") - this.oY) * factor + this.oY;
+				var x2 = (svgNode.getAttribute("x2") - this.oX) * factor + this.oX;
+				var y2 = (svgNode.getAttribute("y2") - this.oY) * factor + this.oY;
+				svgNode.setAttribute("x1", x1);
+				svgNode.setAttribute("y1", y1);
+				svgNode.setAttribute("x2", x2);
+				svgNode.setAttribute("y2", y2);
+				break;
+			case "circle":
+				var cx = (svgNode.getAttribute("cx") - this.oX) * factor + this.oX;
+				var cy = (svgNode.getAttribute("cy") - this.oY) * factor + this.oY;
+				svgNode.setAttribute("cx", cx);
+				svgNode.setAttribute("cy", cy);
+				break;
+			case "polygon":
+				
+				break;
+		}
+	}
+
+}
+
+
 /* 基本几何定义 */
 // 点
 Point = function (x, y) {

@@ -52,8 +52,8 @@ function hideTip()
 	}
 }
 
-function loadXmlImage(){
-	var polyXml = new XML("poly");
+function loadXmlImage(xmlFileName){
+	var polyXml = new XML(xmlFileName);
 	
 	for(var i = 0; i < polyXml.root.childNodes.length; i++) { 
 		var node = polyXml.root.childNodes[i];
@@ -97,33 +97,68 @@ Child.prototype.getChildValue = function () {
 	return this.value;
 }
 
+var scrollFunc = function (e) {  
+
+    e = e || window.event;  
+    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件               
+        if (e.wheelDelta > 0) { //当滑轮向上滚动时  
+        	svg.scale(2);
+            alert("滑轮向上滚动");  
+        }  
+        if (e.wheelDelta < 0) { //当滑轮向下滚动时  
+        	svg.scale(0.5);
+            alert("滑轮向下滚动");  
+        }  
+    } else if (e.detail) {  //Firefox滑轮事件  
+        if (e.detail> 0) { //当滑轮向上滚动时  
+        	svg.scale(2);
+            alert("滑轮向上滚动");  
+        }  
+        if (e.detail< 0) { //当滑轮向下滚动时  
+        	svg.scale(0.5);
+            alert("滑轮向下滚动");  
+        }  
+    }  
+}  
+
+//给页面绑定滑轮滚动事件  
+if (document.addEventListener) {//firefox  
+    document.addEventListener('DOMMouseScroll', scrollFunc, false);  
+}  
+
+//滚动滑轮触发scrollFunc方法  //ie 谷歌  
+window.onmousewheel = document.onmousewheel = scrollFunc;   
+
 
 function init()
 {
 	var obj = new Child();
-	alert(obj.getParentValue());
-	alert(obj.getChildValue());
+	// alert(obj.getParentValue());
+	// alert(obj.getChildValue());
 
 
 	svg = new SVG("svg01", "600px", "500px");
-
+	svg.unit = 30;
 	// 画出坐标系
 	svg.drawCoordinate();
 
-	var p1 = new Point(2,2);
-	var p2 = new Point(1,1);
-	var l1 = new Segment(p1, p2);
+	// 添加抽象点线
+	// var p1 = new Point(2,2);
+	// var p2 = new Point(1,1);
+	// var l1 = new Segment(p1, p2);
 
-	svg.add(p1);
-	svg.add(l1);
-	var l2 = new Segment(new Point(3,6), new Point(7,8));
-	svg.add(l2);
+	// svg.add(p1);
+	// svg.add(l1);
+	// var l2 = new Segment(new Point(3,6), new Point(7,8));
+	// svg.add(l2);
 
 	// 添加响应事件，按一下添加一个小圆点
 	isPC = IsPC();
 	document.body.addEventListener(isPC ? 'click':'touchstart', addPoint, false); 
 
-	loadXmlImage();
+	loadXmlImage("123");
+
+	loadXmlImage("456");
 
 }
 
