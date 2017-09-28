@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<polygon>
+		<point x="0" y="0"/>
+		<point x="10" y="0"/>
+		<point x="10" y="1"/>
+		<point x="0.5" y="0.5"/>
+		<point x="1" y="10"/>
+		<point x="0" y="10"/>
+	</polygon>
+</root>

@@ -1,6 +1,6 @@
-<html>
+<!DOCTYPE html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=unicode" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script src="SVGTool.js"></script>
 <script src="XML.js"></script>
 <script>
@@ -75,6 +75,15 @@ function loadXmlImage(xmlFileName){
 			var poly = new Polygon(vertices);
 			poly.fillColor = "none";
 			svg.add(poly);
+		} else if (node.nodeName == "line") {
+			var x1 = node.getAttribute("x1");
+			var y1 = node.getAttribute("y1");
+			var p1 = new Point(x1, y1);
+			var x2 = node.getAttribute("x2");
+			var y2 = node.getAttribute("y2");
+			var p2 = new Point(x2, y2);
+			var s = new Segment(p1, p2);
+			svg.add(s);
 		}
 	}
 }
@@ -102,21 +111,17 @@ var scrollFunc = function (e) {
     e = e || window.event;  
     if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件               
         if (e.wheelDelta > 0) { //当滑轮向上滚动时  
-        	svg.scale(2);
-            alert("滑轮向上滚动");  
+        	svg.scale(1.1);
         }  
         if (e.wheelDelta < 0) { //当滑轮向下滚动时  
-        	svg.scale(0.5);
-            alert("滑轮向下滚动");  
+        	svg.scale(0.9);
         }  
     } else if (e.detail) {  //Firefox滑轮事件  
         if (e.detail> 0) { //当滑轮向上滚动时  
-        	svg.scale(2);
-            alert("滑轮向上滚动");  
+        	svg.scale(1.1);
         }  
         if (e.detail< 0) { //当滑轮向下滚动时  
-        	svg.scale(0.5);
-            alert("滑轮向下滚动");  
+        	svg.scale(0.9);
         }  
     }  
 }  
@@ -126,7 +131,7 @@ if (document.addEventListener) {//firefox
     document.addEventListener('DOMMouseScroll', scrollFunc, false);  
 }  
 
-//滚动滑轮触发scrollFunc方法  //ie 谷歌  
+//滚动滑轮触发scrollFunc方法  //IE 谷歌  
 window.onmousewheel = document.onmousewheel = scrollFunc;   
 
 
@@ -156,10 +161,11 @@ function init()
 	isPC = IsPC();
 	document.body.addEventListener(isPC ? 'click':'touchstart', addPoint, false); 
 
-	loadXmlImage("123");
+	//loadXmlImage("7");
 
-	loadXmlImage("456");
+	//loadXmlImage("777");
 
+	loadXmlImage("888");
 }
 
 
@@ -167,8 +173,9 @@ function init()
 
 </head>
 
-<body onload = "init()" style = "padding: 0px">
+<body onload = "init()" style = "padding: 0px overflow:scroll;overflow-x:hidden;overflow-y:hidden " >
 <div id="root"></div>
+
 
 </body>
 </html>

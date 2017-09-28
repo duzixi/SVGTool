@@ -1,14 +1,18 @@
 //
 // SVGTool.js
 // 
-// (C) 2015-2017 duzixi.com
-// 
-// 2015.10.03 Created by 杜子兮
-// 2017.09.08 Edited by 杜子兮 实现面向对象封装
-// 2017.09.23 Edited by 杜子兮 添加基本几何形状
-// 
+// (C) 2015-2017 duzixi.com by 杜子兮
+//
 // 封装了常用的SVG方法。
 // 包括：基本形状、滤镜、渐变填充等
+// 
+// Ver 1.0 
+//     2015.10.03 SVG标签函数式封装
+// Ver 2.0 
+//     2017.09.08 实现面向对象封装
+//     2017.09.23 添加基本几何形状及通用绘制函数
+//     2017.09.28 添加放大缩小功能
+// 
 
 /* 通用 */
 
@@ -39,7 +43,7 @@ SVG.prototype.toScreenY = function (y) {
 	return this.oY - (y - 0) * this.unit;
 }
 
-// 画坐标系底格
+// 画坐标系底格(先这么写着，以后慢慢优化)
 SVG.prototype.drawCoordinate = function () {
 	var l1 = this.addLineNode("l001", this.oX, 0, this.oX, this.oY * 2, 2, "black");
 	var l2 = this.addLineNode("l002", 0, this.oY, this.oX * 2, this.oY, 2, "black");
@@ -48,24 +52,20 @@ SVG.prototype.drawCoordinate = function () {
 	for (var i = Math.round(this.oX / this.unit); i >= - Math.round(this.oX / this.unit); i--) {
 		this.addString(this.oX - i * this.unit, this.oY + 7, -i);
 		if (i == 0 ) { continue; }
-		this.addLineNode("l01" + (i + 100), this.oX - i * this.unit, 0, this.oX - i * this.unit, this.oY * 2, 1, "gray");
+		this.addLineNode("l01" + (i + 100), this.oX - i * this.unit, 0, this.oX - i * this.unit, this.oY * 2, 1, "#DDDDDD");
 		
 	}
 
 	for (var i = Math.round(this.oY / this.unit); i >= - Math.round(this.oY / this.unit); i--) {
 		if (i == 0 ) { continue; }
-		this.addLineNode("l02" + (i + 100), 0, this.oY - i * this.unit, this.oX * 2, this.oY - i * this.unit, 1, "gray");
+		this.addLineNode("l02" + (i + 100), 0, this.oY - i * this.unit, this.oX * 2, this.oY - i * this.unit, 1, "#DDDDDD");
 		this.addString(this.oX - 9  , this.oY - i * this.unit, i);
 	}
 } 
 
 // 更新整个图（放大、缩小）
 SVG.prototype.scale = function (factor) {
-	// this.drawCoordinate();
-	// alert(this.rootNode.childNodes.length);
-	for (var i = 0; i <= this.rootNode.childNodes.length; i++) {
-		// alert(this.rootNode.childNodes[i].nodeName);
-		// if (i > 10) {return}
+	for (var i = 0; i < this.rootNode.childNodes.length; i++) {
 		var svgNode = this.rootNode.childNodes[i];
 		
 		switch (svgNode.nodeName) {
@@ -82,15 +82,36 @@ SVG.prototype.scale = function (factor) {
 			case "circle":
 				var cx = (svgNode.getAttribute("cx") - this.oX) * factor + this.oX;
 				var cy = (svgNode.getAttribute("cy") - this.oY) * factor + this.oY;
+				var r = svgNode.getAttribute("r") * factor;
 				svgNode.setAttribute("cx", cx);
 				svgNode.setAttribute("cy", cy);
+				svgNode.setAttribute("r", r);
 				break;
 			case "polygon":
-				
+				var points = svgNode.getAttribute("points");
+				var arrPoints = points.split(" ");
+				points = "";
+				for (var j = 0; j < arrPoints.length; j++) {
+					var x = (arrPoints[j].split(",")[0] - this.oX) * factor + this.oX;
+					var y = (arrPoints[j].split(",")[1] - this.oY) * factor + this.oY;
+					points += x + "," + y + " ";
+				}
+				svgNode.setAttribute("points", points);
 				break;
 		}
 	}
-
+	
+	// 字符的情况
+	for (var i = 0; i < root.childNodes.length; i++) {
+		var divNode = root.childNodes[i];
+		if (divNode.getAttribute("class") == "label") {
+			var left = (divNode.style.left.replace("px", "") - this.oX) * factor + this.oX;
+			var top = (divNode.style.top.replace("px", "") - this.oY) * factor + this.oY;
+			divNode.style.left = left + "px";
+			divNode.style.top = top + "px";
+		}
+	}
+	
 }
 
 
@@ -432,6 +453,7 @@ SVG.prototype.radialGradient = function (id, cx, cy, r, fx, fy, offsets, colors,
 SVG.prototype.addString = function (x, y, str) {
 	var divNode = document.createElement("div");
 	root.appendChild(divNode);
+	divNode.setAttribute("class", "label");
 	divNode.setAttribute("style","position: absolute;left:" + x + "px;top:" + y + "px;");
 	divNode.innerHTML = str;
 	return divNode;
