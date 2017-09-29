@@ -29,8 +29,10 @@ SVG = function (id, width, height) {
 	this.defsNode = document.createElement("defs");
 	this.rootNode.appendChild(this.defsNode);
 	this.nodeNum = 0;
-	this.oX = document.documentElement.clientWidth / 2;   // 对于每一个图坐标原点有可能不同
-	this.oY = document.documentElement.clientHeight / 2;
+	// this.oX = document.documentElement.clientWidth / 2;   // 对于每一个图坐标原点有可能不同
+	// this.oY = document.documentElement.clientHeight / 2;
+	this.oX = 0;
+	this.oY = document.documentElement.clientHeight;
 	this.unit = 20; // 1个单位的线段的默认长度为20像素
 }
 
@@ -460,6 +462,35 @@ SVG.prototype.addString = function (x, y, str) {
 }
 
 // ------------------- 交互变换 ------------------------
+
+// 滚轮放大缩小
+var scrollFunc = function (e) {  
+
+    e = e || window.event;  
+    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件               
+        if (e.wheelDelta > 0) { //当滑轮向上滚动时  
+        	svg.scale(1.1);
+        }  
+        if (e.wheelDelta < 0) { //当滑轮向下滚动时  
+        	svg.scale(0.9);
+        }  
+    } else if (e.detail) {  //Firefox滑轮事件  
+        if (e.detail> 0) { //当滑轮向上滚动时  
+        	svg.scale(1.1);
+        }  
+        if (e.detail< 0) { //当滑轮向下滚动时  
+        	svg.scale(0.9);
+        }  
+    }  
+}  
+
+//给页面绑定滑轮滚动事件  （但感觉这个应该可以设置，设置的契机是什么）
+if (document.addEventListener) {//firefox  
+    document.addEventListener('DOMMouseScroll', scrollFunc, false);  
+}  
+
+//滚动滑轮触发scrollFunc方法  //IE 谷歌  
+window.onmousewheel = document.onmousewheel = scrollFunc;   
 
 // 获取鼠标位置
 function getMousePos(event) {

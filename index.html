@@ -52,14 +52,18 @@ function hideTip()
 	}
 }
 
-function loadXmlImage(xmlFileName){
+// 想来想去感觉通用性不是很强，所以还是先不放到SVGTool.js里了
+function loadXmlImage(xmlFileName, color){
 	var polyXml = new XML(xmlFileName);
+	var factor = 0.05;
+	var offsetX = -10;
+	var offsetY = -10;
 	
 	for(var i = 0; i < polyXml.root.childNodes.length; i++) { 
 		var node = polyXml.root.childNodes[i];
 		if (node.nodeName == "point") {
-			var x = node.getAttribute("x");
-			var y = node.getAttribute("y");
+			var x = node.getAttribute("x") * factor + offsetX;
+			var y = node.getAttribute("y") * factor + offsetY;
 
 			var p = new Point(x, y);
 			p.fillColor = "green";
@@ -68,19 +72,20 @@ function loadXmlImage(xmlFileName){
 		} else if (node.nodeName == "polygon") {
 			var vertices = new Array();
 			for (var j = 0; j < node.childNodes.length; j++) {
-				var x = node.childNodes[j].getAttribute("x");
-				var y = node.childNodes[j].getAttribute("y");
+				var x = node.childNodes[j].getAttribute("x") * factor + offsetX;
+				var y = node.childNodes[j].getAttribute("y") * factor + offsetY;
 				vertices[vertices.length] = new Point(x, y);
 			}
 			var poly = new Polygon(vertices);
-			poly.fillColor = "none";
+			poly.fillColor = color;
+			
 			svg.add(poly);
 		} else if (node.nodeName == "line") {
-			var x1 = node.getAttribute("x1");
-			var y1 = node.getAttribute("y1");
+			var x1 = node.getAttribute("x1") * factor + offsetX;
+			var y1 = node.getAttribute("y1") * factor + offsetY;
 			var p1 = new Point(x1, y1);
-			var x2 = node.getAttribute("x2");
-			var y2 = node.getAttribute("y2");
+			var x2 = node.getAttribute("x2") * factor + offsetX;
+			var y2 = node.getAttribute("y2") * factor + offsetY;
 			var p2 = new Point(x2, y2);
 			var s = new Segment(p1, p2);
 			svg.add(s);
@@ -106,33 +111,7 @@ Child.prototype.getChildValue = function () {
 	return this.value;
 }
 
-var scrollFunc = function (e) {  
 
-    e = e || window.event;  
-    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件               
-        if (e.wheelDelta > 0) { //当滑轮向上滚动时  
-        	svg.scale(1.1);
-        }  
-        if (e.wheelDelta < 0) { //当滑轮向下滚动时  
-        	svg.scale(0.9);
-        }  
-    } else if (e.detail) {  //Firefox滑轮事件  
-        if (e.detail> 0) { //当滑轮向上滚动时  
-        	svg.scale(1.1);
-        }  
-        if (e.detail< 0) { //当滑轮向下滚动时  
-        	svg.scale(0.9);
-        }  
-    }  
-}  
-
-//给页面绑定滑轮滚动事件  
-if (document.addEventListener) {//firefox  
-    document.addEventListener('DOMMouseScroll', scrollFunc, false);  
-}  
-
-//滚动滑轮触发scrollFunc方法  //IE 谷歌  
-window.onmousewheel = document.onmousewheel = scrollFunc;   
 
 
 function init()
@@ -143,7 +122,7 @@ function init()
 
 
 	svg = new SVG("svg01", "600px", "500px");
-	svg.unit = 30;
+	svg.unit = 20;
 	// 画出坐标系
 	svg.drawCoordinate();
 
@@ -161,11 +140,19 @@ function init()
 	isPC = IsPC();
 	document.body.addEventListener(isPC ? 'click':'touchstart', addPoint, false); 
 
-	//loadXmlImage("7");
+	// double lOffset = 0.24; 的情况
+	/*
+	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\poly_0");
+	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\inner_offset_polygons_0");
+	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\ss_0");
+	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\Ss_polygon_0");
+	*/
 
-	//loadXmlImage("777");
-
-	loadXmlImage("888");
+	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\poly", "none");
+	
+	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\ss");
+	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\inner_offset_polygons", "yellow");
+	// loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\Ss_polygon");
 }
 
 
