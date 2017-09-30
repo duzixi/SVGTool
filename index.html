@@ -123,6 +123,9 @@ function init()
 
 	svg = new SVG("svg01", "600px", "500px");
 	svg.unit = 20;
+
+	svg.oX = 0;
+	svg.oY = document.documentElement.clientHeight;
 	// 画出坐标系
 	svg.drawCoordinate();
 

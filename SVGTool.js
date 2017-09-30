@@ -2,6 +2,7 @@
 // SVGTool.js
 // 
 // (C) 2015-2017 duzixi.com by 杜子兮
+// https://github.com/duzixi/SVGTool.git
 //
 // 封装了常用的SVG方法。
 // 包括：基本形状、滤镜、渐变填充等
@@ -15,6 +16,9 @@
 // 
 
 /* 通用 */
+// 常量定义
+var W = document.documentElement.clientWidth;
+var H = document.documentElement.clientHeight;
 
 SVG = function (id, width, height) {
 	this.XMLNS = "http://www.w3.org/2000/svg"; // 命名空间
@@ -29,10 +33,8 @@ SVG = function (id, width, height) {
 	this.defsNode = document.createElement("defs");
 	this.rootNode.appendChild(this.defsNode);
 	this.nodeNum = 0;
-	// this.oX = document.documentElement.clientWidth / 2;   // 对于每一个图坐标原点有可能不同
-	// this.oY = document.documentElement.clientHeight / 2;
-	this.oX = 0;
-	this.oY = document.documentElement.clientHeight;
+	this.oX = document.documentElement.clientWidth / 2;   // 默认情况下坐标原点在中心
+	this.oY = document.documentElement.clientHeight / 2;
 	this.unit = 20; // 1个单位的线段的默认长度为20像素
 }
 
@@ -45,23 +47,31 @@ SVG.prototype.toScreenY = function (y) {
 	return this.oY - (y - 0) * this.unit;
 }
 
-// 画坐标系底格(先这么写着，以后慢慢优化)
+SVG.prototype.toCoordinateX = function (x) {
+	return (x - this.oX) / this.unit;
+}
+
+SVG.prototype.toCoordinateY = function (y) {
+	return (this.oY - y) / this.unit;
+}
+
+// 画坐标系底格
 SVG.prototype.drawCoordinate = function () {
-	var l1 = this.addLineNode("l001", this.oX, 0, this.oX, this.oY * 2, 2, "black");
-	var l2 = this.addLineNode("l002", 0, this.oY, this.oX * 2, this.oY, 2, "black");
+	var l1 = this.addLineNode("l001", this.oX, 0, this.oX, H , 2, "black");
+	var l2 = this.addLineNode("l002", 0, this.oY, W, this.oY, 2, "black");
 
 	
-	for (var i = Math.round(this.oX / this.unit); i >= - Math.round(this.oX / this.unit); i--) {
-		this.addString(this.oX - i * this.unit, this.oY + 7, -i);
+	for (var i = Math.round(this.toCoordinateX(0)); i <= Math.round(this.toCoordinateX(W)); i++) {
+		this.addString(this.toScreenX(i), this.oY + 7, i);
 		if (i == 0 ) { continue; }
-		this.addLineNode("l01" + (i + 100), this.oX - i * this.unit, 0, this.oX - i * this.unit, this.oY * 2, 1, "#DDDDDD");
+		this.addLineNode("l01" + (i + 100), this.toScreenX(i), 0, this.toScreenX(i), H, 1, "#DDDDDD");
 		
 	}
 
-	for (var i = Math.round(this.oY / this.unit); i >= - Math.round(this.oY / this.unit); i--) {
+	for (var i = Math.round(this.toCoordinateY(H)); i <= Math.round(this.toCoordinateY(0)); i++) {
 		if (i == 0 ) { continue; }
-		this.addLineNode("l02" + (i + 100), 0, this.oY - i * this.unit, this.oX * 2, this.oY - i * this.unit, 1, "#DDDDDD");
-		this.addString(this.oX - 9  , this.oY - i * this.unit, i);
+		this.addLineNode("l02" + (i + 100), 0, this.toScreenY(i), W, this.toScreenY(i), 1, "#DDDDDD");
+		this.addString(this.oX - 9  , this.toScreenY(i), i);
 	}
 } 
 
