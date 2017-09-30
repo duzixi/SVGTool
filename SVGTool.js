@@ -116,6 +116,54 @@ SVG.prototype.scale = function (factor) {
 	
 }
 
+SVG.prototype.move = function(offsetX, offsetY) {
+	// alert(offsetX + "," + offsetY);
+	for (var i = 0; i < this.rootNode.childNodes.length; i++) {
+		var svgNode = this.rootNode.childNodes[i];
+		
+		switch (svgNode.nodeName) {
+			case "line":
+				var x1 = svgNode.getAttribute("x1") - 0 + offsetX;
+				var y1 = svgNode.getAttribute("y1") - 0 + offsetY;
+				var x2 = svgNode.getAttribute("x2") - 0 + offsetX;
+				var y2 = svgNode.getAttribute("y2") - 0 + offsetY;
+				svgNode.setAttribute("x1", x1);
+				svgNode.setAttribute("y1", y1);
+				svgNode.setAttribute("x2", x2);
+				svgNode.setAttribute("y2", y2);
+				break;
+			case "circle":
+				var cx = svgNode.getAttribute("cx") - 0 + offsetX;
+				var cy = svgNode.getAttribute("cy") - 0 + offsetY;
+				svgNode.setAttribute("cx", cx);
+				svgNode.setAttribute("cy", cy);
+				break;
+			case "polygon":
+				var points = svgNode.getAttribute("points");
+				var arrPoints = points.split(" ");
+				points = "";
+				for (var j = 0; j < arrPoints.length; j++) {
+					var x = arrPoints[j].split(",")[0] - 0 + offsetX;
+					var y = arrPoints[j].split(",")[1] - 0 + offsetY;
+					points += x + "," + y + " ";
+				}
+				svgNode.setAttribute("points", points);
+				break;
+		}
+	}
+
+	// 字符的情况
+	for (var i = 0; i < root.childNodes.length; i++) {
+		var divNode = root.childNodes[i];
+		if (divNode.getAttribute("class") == "label") {
+			var left = divNode.style.left.replace("px", "") - 0 + offsetX;
+			var top = divNode.style.top.replace("px", "") - 0 + offsetY;
+			divNode.style.left = left + "px";
+			divNode.style.top = top + "px";
+		}
+	}
+}
+
 
 /* 基本几何定义 */
 // 点
@@ -463,7 +511,62 @@ SVG.prototype.addString = function (x, y, str) {
 
 // ------------------- 交互变换 ------------------------
 
-// 滚轮放大缩小
+// 拖拽
+var params = {
+	startX: 0,
+	startY: 0,
+	endX: 0,
+	endY: 0,
+	flag: false
+};
+
+document.onmousedown = function(event){
+
+	params.flag = true;
+	if(!event){
+		event = window.event;
+		//防止IE文字选中
+		bar.onselectstart = function(){
+			return false;
+		}  
+	}
+	var e = event;
+	params.startX = e.clientX;
+	params.startY = e.clientY;
+};
+
+document.onmouseup = function(event){
+	params.flag = false;
+	if(!event){
+		event = window.event;
+	}
+	var e = event;
+	params.endX = e.clientX;
+	params.endY = e.clientY;
+	// alert(params.endX - params.startX);
+	// alert("x:" + params.endX - params.startX + ", y:" + params.endY - params.startY);
+	// params.left = getCss(target, "left");
+	// params.top = getCss(target, "top");
+	svg.move(params.endX - params.startX, params.endY - params.startY);
+};
+
+document.onmousemove = function(event){
+	/*
+	var e = event ? event: window.event;
+	if(params.flag){
+		var nowX = e.clientX, nowY = e.clientY;
+		var disX = nowX - params.currentX, disY = nowY - params.currentY;
+		target.style.left = parseInt(params.left) + disX + "px";
+		target.style.top = parseInt(params.top) + disY + "px";
+		if (event.preventDefault) {
+			event.preventDefault();
+		}
+		return false;
+	}
+	*/
+}
+
+// 滚轮放大缩小 (这个svg得换一下吧....)
 var scrollFunc = function (e) {  
 
     e = e || window.event;  
