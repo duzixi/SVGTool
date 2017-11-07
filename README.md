@@ -40,30 +40,30 @@ Ver 2.0.0 2017.11.07
 
 ### STEP 03：Add shape whatever you want. 添加想要的图形
 
+```javascript
     var c1 = svg.addCircleNode("c02", 200, 100, 50, "rgba(5,100,10,0.4)", 0, "yellow");
+```
 
 ### STEP 04：Add event to the svg node. 添加需要的事件
 
-    c1.onclick = function () { alert("!")};
+```javascript
+    c1.onclick = function () { alert("!") };
+```
 
 See the index.html for more information. 运行查看index.html获得更多信息。
+
 ----
 
 ## API
 
 Constructor 构造函数：
 
-- SVG(id, width, height) 
-
-- Point(x, y)
-
-- Segment(p0, p1)
-
-- Polygon(arrPoints)
+        SVG(id, width, height) 
 
 
-Uniform format 通用形式：
-- addXxxxNode: 添加并返回SVG节点, 由全局对象svg调用。
+Uniform format 通用形式：添加并返回SVG节点, 由全局对象svg调用。
+
+        .addXxxxNode
 
 ----
 
@@ -101,12 +101,43 @@ Uniform format 通用形式：
 
         .addString(x, y, str);
 
-        说明：这个方法其实不算SVG，但是现实图形的时候往往也会有字符串显示需求，所以附加在这里。
+说明：这个方法其实不算SVG，但是现实图形的时候往往也会有字符串显示需求，所以附加在这里。
 
 ----
 
-## 
+## 笛卡尔坐标系中的点线面
 
+- 点
+        
+        Point(x, y)
+
+- 线段
+        
+        Segment(p0, p1)
+
+- 多边形
+        
+        Polygon(arrPoints)
+
+- 通用绘制函数
+        
+        .add(obj)
+
+----
+
+## 画布
+
+- 画坐标系底格
+
+        .drawCoordinate();
+
+- 画布内容放大缩小
+
+        .scale();
+
+- 画布内容移动
+
+        .move();
 
 ----
 
