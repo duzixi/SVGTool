@@ -13,7 +13,8 @@
 //     2017.09.08 实现面向对象封装
 //     2017.09.23 添加基本几何形状及通用绘制函数
 //     2017.09.28 添加放大缩小功能
-// 
+//     2017.09.29 拖拽移动整个画布
+//     2017.10.11 载入Xml文件格式图形及可视化
 
 /* 通用 */
 // 常量定义
@@ -36,6 +37,9 @@ SVG = function (id, width, height) {
 	this.oX = document.documentElement.clientWidth / 2;   // 默认情况下坐标原点在中心
 	this.oY = document.documentElement.clientHeight / 2;
 	this.unit = 20; // 1个单位的线段的默认长度为20像素
+	this.factor = 0.05;
+	this.offsetX = -10;
+	this.offsetY = -10;
 }
 
 // 坐标点与屏幕像素点转换
@@ -126,8 +130,12 @@ SVG.prototype.scale = function (factor) {
 	
 }
 
+// 移动
 SVG.prototype.move = function(offsetX, offsetY) {
 	// alert(offsetX + "," + offsetY);
+	this.oX += offsetX;
+	this.oY += offsetY;
+
 	for (var i = 0; i < this.rootNode.childNodes.length; i++) {
 		var svgNode = this.rootNode.childNodes[i];
 		
@@ -519,6 +527,45 @@ SVG.prototype.addString = function (x, y, str) {
 	return divNode;
 }
 
+/* 载入特定Xml文档 */
+SVG.prototype.loadXmlImage = function (xmlFilePath, color){
+	var polyXml = new XML(xmlFilePath);
+	if (!polyXml) { return }
+	
+	for(var i = 0; i < polyXml.root.childNodes.length; i++) { 
+		var node = polyXml.root.childNodes[i];
+		if (node.nodeName == "point") {
+			var x = node.getAttribute("x") * this.factor + this.offsetX;
+			var y = node.getAttribute("y") * this.factor + this.offsetY;
+
+			var p = new Point(x, y);
+			p.fillColor = color;
+			this.add(p);
+
+		} else if (node.nodeName == "polygon") {
+			var vertices = new Array();
+			for (var j = 0; j < node.childNodes.length; j++) {
+				var x = node.childNodes[j].getAttribute("x") * this.factor + this.offsetX;
+				var y = node.childNodes[j].getAttribute("y") * this.factor + this.offsetY;
+				vertices[vertices.length] = new Point(x, y);
+			}
+			var poly = new Polygon(vertices);
+			poly.fillColor = color;
+			
+			this.add(poly);
+		} else if (node.nodeName == "line") {
+			var x1 = node.getAttribute("x1") * this.factor + this.offsetX;
+			var y1 = node.getAttribute("y1") * this.factor + this.offsetY;
+			var p1 = new Point(x1, y1);
+			var x2 = node.getAttribute("x2") * this.factor + this.offsetX;
+			var y2 = node.getAttribute("y2") * this.factor + this.offsetY;
+			var p2 = new Point(x2, y2);
+			var s = new Segment(p1, p2);
+			this.add(s);
+		}
+	}
+}
+
 // ------------------- 交互变换 ------------------------
 
 // 拖拽
@@ -531,7 +578,7 @@ var params = {
 };
 
 document.onmousedown = function(event){
-
+	event.preventDefault();
 	params.flag = true;
 	if(!event){
 		event = window.event;
@@ -553,12 +600,40 @@ document.onmouseup = function(event){
 	var e = event;
 	params.endX = e.clientX;
 	params.endY = e.clientY;
-	// alert(params.endX - params.startX);
-	// alert("x:" + params.endX - params.startX + ", y:" + params.endY - params.startY);
-	// params.left = getCss(target, "left");
-	// params.top = getCss(target, "top");
-	svg.move(params.endX - params.startX, params.endY - params.startY);
+
+	if (params.startX != params.endX || params.startY != params.endY) {
+		svg.move(params.endX - params.startX, params.endY - params.startY);
+	} else {
+		var c = svg.addCircleNode("c" + svg.nodeNum++, params.endX - 7, params.endY - 7, 3, "rgba(0,0,200,1)", 0, "red");
+		
+		c.onmouseover = showTip;
+		c.onmouseout = hideTip;
+		
+		// 计算对应坐标系的x y
+		c.x = (params.endX - svg.oX - 7 - 1.5) / svg.unit; 
+		c.y = (svg.oY - params.endY + 7 ) / svg.unit;
+	}
+	
 };
+
+function showTip()
+{
+	swapColor(this);
+	if (!this.tip) {
+		this.tip = svg.addString(this.getAttribute("cx"), (this.getAttribute("cy") - 0 - 10),
+							 this.x.toFixed(1) + "," + this.y.toFixed(1));
+	} else {
+		this.tip.style.visibility = "visible";
+	}
+}
+
+function hideTip()
+{
+	swapColor(this);
+	if (this.tip) {
+		this.tip.style.visibility = "hidden";
+	}
+}
 
 document.onmousemove = function(event){
 	/*

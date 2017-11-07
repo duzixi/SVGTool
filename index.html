@@ -1,161 +1,30 @@
 <!DOCTYPE html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script src="SVGTool.js"></script>
 <script src="XML.js"></script>
+<script src="SVGTool.js"></script>
 <script>
 // 存储SVG对象及根节点
-var svg;
-var isPC;
-
-// 按一下添加一个小圆点
-function addPoint(event) {
-	var eventX, eventY;
-	if (isPC) {
-		var mousePos = getMousePos(event);
-		eventX = mousePos.x;
-		eventY = mousePos.y;
-	} else {
-		event.preventDefault();
-			var touch = event.targetTouches[0];
-			eventX = touch.pageX;
-			eventY = touch.pageY;
-	}
-
-	var c = svg.addCircleNode("c" + svg.nodeNum++, eventX - 7, eventY - 7, 3, "rgba(0,0,200,1)", 0, "red");
-	if (isPC) {
-		c.onmouseover = showTip;
-		c.onmouseout = hideTip;
-	}
-	// 计算对应坐标系的x y
-	c.x = (eventX - svg.oX - 7 - 1.5) / svg.unit; 
-	c.y = (svg.oY - eventY + 7 ) / svg.unit;
-	
-}
-
-function showTip()
-{
-	swapColor(this);
-	if (!this.tip) {
-		this.tip = svg.addString(this.getAttribute("cx"), (this.getAttribute("cy") - 0 - 10),
-							 this.x.toFixed(1) + "," + this.y.toFixed(1));
-	} else {
-		this.tip.style.visibility = "visible";
-	}
-}
-
-function hideTip()
-{
-	swapColor(this);
-	if (this.tip) {
-		this.tip.style.visibility = "hidden";
-	}
-}
-
-// 想来想去感觉通用性不是很强，所以还是先不放到SVGTool.js里了
-function loadXmlImage(xmlFileName, color){
-	var polyXml = new XML(xmlFileName);
-	var factor = 0.05;
-	var offsetX = -10;
-	var offsetY = -10;
-	
-	for(var i = 0; i < polyXml.root.childNodes.length; i++) { 
-		var node = polyXml.root.childNodes[i];
-		if (node.nodeName == "point") {
-			var x = node.getAttribute("x") * factor + offsetX;
-			var y = node.getAttribute("y") * factor + offsetY;
-
-			var p = new Point(x, y);
-			p.fillColor = "green";
-			svg.add(p);
-
-		} else if (node.nodeName == "polygon") {
-			var vertices = new Array();
-			for (var j = 0; j < node.childNodes.length; j++) {
-				var x = node.childNodes[j].getAttribute("x") * factor + offsetX;
-				var y = node.childNodes[j].getAttribute("y") * factor + offsetY;
-				vertices[vertices.length] = new Point(x, y);
-			}
-			var poly = new Polygon(vertices);
-			poly.fillColor = color;
-			
-			svg.add(poly);
-		} else if (node.nodeName == "line") {
-			var x1 = node.getAttribute("x1") * factor + offsetX;
-			var y1 = node.getAttribute("y1") * factor + offsetY;
-			var p1 = new Point(x1, y1);
-			var x2 = node.getAttribute("x2") * factor + offsetX;
-			var y2 = node.getAttribute("y2") * factor + offsetY;
-			var p2 = new Point(x2, y2);
-			var s = new Segment(p1, p2);
-			svg.add(s);
-		}
-	}
-}
-
-/* 继承测试 */
-Parent = function () {
-	this.value = true;
-}
-
-Parent.prototype.getParentValue = function () {
-	return this.value;
-}
- 
-Child = function () {
-	this.property = false;
-}
-
-Child.prototype = new Parent ();
-Child.prototype.getChildValue = function () {
-	return this.value;
-}
-
-
-
+// var svg;
 
 function init()
 {
-	var obj = new Child();
-	// alert(obj.getParentValue());
-	// alert(obj.getChildValue());
-
-
-	svg = new SVG("svg01", "600px", "500px");
+	svg = new SVG("svg01");
 	svg.unit = 20;
 
-	svg.oX = 0;
-	svg.oY = document.documentElement.clientHeight;
 	// 画出坐标系
 	svg.drawCoordinate();
 
 	// 添加抽象点线
-	//var p1 = new Point(2,2);
-	// var p2 = new Point(1,1);
-	// var l1 = new Segment(p1, p2);
+	var p1 = new Point(2,2);
+	var p2 = new Point(1,1);
+	var l1 = new Segment(p1, p2);
 
-	//svg.add(p1);
-	// svg.add(l1);
-	// var l2 = new Segment(new Point(3,6), new Point(7,8));
-	// svg.add(l2);
+	svg.add(p1);
+	svg.add(l1);
+	var l2 = new Segment(new Point(3,6), new Point(7,8));
+	svg.add(l2);
 
-	// 添加响应事件，按一下添加一个小圆点
-	// isPC = IsPC();
-	// document.body.addEventListener(isPC ? 'click':'touchstart', addPoint, false); 
-
-	// double lOffset = 0.24; 的情况
-	/*
-	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\poly_0");
-	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\inner_offset_polygons_0");
-	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\ss_0");
-	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\Ss_polygon_0");
-	*/
-
-	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\poly", "none");
-	
-	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\ss");
-	loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\inner_offset_polygons", "yellow");
-	// loadXmlImage("D:\\Exersize\\HelloCGAL\\HelloCGAL\\Ss_polygon");
 }
 
 
